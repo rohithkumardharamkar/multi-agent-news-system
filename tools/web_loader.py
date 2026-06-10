@@ -41,31 +41,24 @@ def get_links_from_web(hub_url: str):
                 }
             }
         )
-        # We don't use parse_only here because we want to see anchor tags
         doc = loader.load()[0]
-        # WebBaseLoader uses BeautifulSoup internally, but we might need to re-parse or use raw HTML
-        # Actually WebBaseLoader.load() returns Documents with text.
-        # To get links, we should probably use BeautifulSoup directly or configure WebBaseLoader.
-        
         from bs4 import BeautifulSoup
         import requests
         
         headers = {"User-Agent": "Mozilla/5.0"}
         response = requests.get(hub_url, headers=headers)
         soup = BeautifulSoup(response.text, 'html.parser')
-        
         links = []
         for a in soup.find_all('a', href=True):
             href = a['href']
             text = a.get_text(strip=True)
             if len(text) > 20 and (href.startswith('http') or href.startswith('/')):
-                # Normalize relative URLs
                 if href.startswith('/'):
                     from urllib.parse import urljoin
                     href = urljoin(hub_url, href)
                 links.append({"title": text, "url": href, "content": text})
         
-        return links[:20] # Return top 20 links
+        return links[:20] 
     except Exception as e:
         print(f"[Link Extraction Error] {e}")
         return []

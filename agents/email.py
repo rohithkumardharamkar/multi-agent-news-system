@@ -8,11 +8,15 @@ def email_agent(state):
     if not report:
         return {"email_status": "No report to send", "logs": logs}
     target_email = state.get("target_email") or EMAIL_TO
+    print("EMAIL_USER =", EMAIL_USER)
+    print("EMAIL_PASSWORD =", "SET" if EMAIL_PASSWORD else "NOT SET")
+    print("EMAIL_TO =", EMAIL_TO)
+    print("TARGET_EMAIL =", target_email)
     if not EMAIL_USER or not EMAIL_PASSWORD or not target_email:
         return {"email_status": "Email not configured - report generated successfully", "logs": logs}
     try:
         msg = MIMEText(report)
-        msg["Subject"] = "Daily AI News Magazine Digest"
+        msg["Subject"] = "News Magazine Digest"
         msg["From"] = EMAIL_USER
         msg["To"] = target_email
         with smtplib.SMTP(EMAIL_HOST, EMAIL_PORT) as server:
